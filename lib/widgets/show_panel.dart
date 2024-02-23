@@ -12,16 +12,18 @@ class ShowPanel extends StatelessWidget {
     //PanelStore panel = PanelStore();
     final panel = Provider.of<PanelStore>(context);
 
-    return Observer(builder: (_) {
-      return Column(
+    return Observer(
+      builder: (_) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Hora de trabalhar',
-            style: TextStyle(fontSize: 40, color: Colors.lime),
+          Text(
+            panel.tipoIntervalo == TipoIntervalo.TRABALHO
+                ? 'Hora de trabalhar'
+                : 'Hora de Descansar',
+            style: const TextStyle(fontSize: 40, color: Colors.lime),
           ),
           Text(
-            '${panel.digitoPainelMin.toString().padLeft(2, '0')} '
+            '${panel.digitoPainelMin.toString().padLeft(2, '0')}:'
             '${panel.digitoPainelSec.toString().padLeft(2, '0')}',
             style: const TextStyle(fontSize: 110, color: Colors.white),
           ),
@@ -30,27 +32,28 @@ class ShowPanel extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                panel.iniciado
-                    ? ElevatedButton.icon(
-                        onPressed: panel.decrement,
-                        label: const Text('Parar'),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white),
-                        icon: const Icon(Icons.restart_alt_outlined,
-                            color: Colors.teal))
-                    : ElevatedButton.icon(
-                        onPressed: panel.increment,
-                        label: panel.digitoPainelSec == panel.iniSec
-                            ? const Text('Começar')
-                            : const Text('Continuar'),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white),
-                        icon: const Icon(Icons.play_arrow, color: Colors.teal)),
+                if (panel.iniciado)
+                  ElevatedButton.icon(
+                      onPressed: panel.parar,
+                      label: const Text('Parar'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      icon: const Icon(Icons.restart_alt_outlined,
+                          color: Colors.teal))
+                else if (!panel.iniciado)
+                  ElevatedButton.icon(
+                      onPressed: panel.iniciar,
+                      label: //panel.digitoPainelSec == panel.iniSec                            ?
+                          const Text('Começar'),
+                      //: const Text('Continuar'),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
+                      icon: const Icon(Icons.play_arrow, color: Colors.teal)),
                 ElevatedButton.icon(
-                    onPressed:
-                        panel.digitoPainelSec != panel.iniSec && !panel.iniciado
-                            ? panel.reiniciar
-                            : null,
+                    onPressed: panel.reiniciar,
+                    // panel.digitoPainelSec != panel.iniSec && !panel.iniciado
+                    //     ? panel.reiniciar
+                    //     : null,
                     label: const Text('Reiniciar'),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.white),
@@ -59,7 +62,7 @@ class ShowPanel extends StatelessWidget {
             ),
           )
         ],
-      );
-    });
+      ),
+    );
   }
 }

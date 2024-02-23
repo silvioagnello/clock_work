@@ -5,22 +5,22 @@ part 'panel_store.g.dart';
 
 class PanelStore = _PanelStore with _$PanelStore;
 
+enum TipoIntervalo { TRABALHO, DESCANSO }
+
 abstract class _PanelStore with Store {
   _PanelStore() {
-    //autorun((_) => print(iniMinTrabalho.toString()));
+    //autorun((_) => print(tipoIntervalo.toString()));
   }
 
-  int counter = 100;
+  int iniMin = 0;
+  int counter = 60;
   Timer? cronometro;
 
   @observable
-  bool isWorking = true;
+  int iniMinTrabalho = 3;
 
   @observable
-  int iniMinTrabalho = 1;
-
-  @observable
-  int iniMinDescanso = 1;
+  int iniMinDescanso = 2;
 
   @observable
   int iniSec = 0;
@@ -29,10 +29,13 @@ abstract class _PanelStore with Store {
   bool iniciado = false;
 
   @observable
-  int digitoPainelMin = 1;
+  int digitoPainelMin = 3;
 
   @observable
   int digitoPainelSec = 0;
+
+  @observable
+  TipoIntervalo tipoIntervalo = TipoIntervalo.TRABALHO;
 
   @action
   void incTrabalho() {
@@ -59,16 +62,14 @@ abstract class _PanelStore with Store {
   }
 
   @action
-  void increment() {
+  void iniciar() {
     iniciado = true;
-    var iniMin = isWorking ? iniMinTrabalho : iniMinDescanso;
     cronometro = Timer.periodic(
       Duration(milliseconds: counter),
       (timer) {
         if (digitoPainelMin == 0 && digitoPainelSec == 0) {
+          trocarIntervalo();
           digitoPainelMin = iniMin;
-          iniciado = false;
-          cronometro?.cancel();
         } else if (digitoPainelSec == iniSec) {
           digitoPainelSec = 59;
           digitoPainelMin--;
@@ -80,17 +81,39 @@ abstract class _PanelStore with Store {
   }
 
   @action
-  void reiniciar() {
+  void parar() {
+    cronometro?.cancel();
     iniciado = false;
-    digitoPainelMin = iniMinTrabalho;
-    digitoPainelSec = iniSec;
   }
 
   @action
-  void decrement() {
-    if (iniciado == true) {
-      cronometro?.cancel();
-      iniciado = false;
+  void reiniciar() {
+    parar();
+    tipoIntervalo = TipoIntervalo.TRABALHO;
+    digitoPainelMin = iniMinTrabalho;
+    digitoPainelSec = 0;
+  }
+
+  bool estaTrabalhando() {
+    return tipoIntervalo == TipoIntervalo.TRABALHO;
+  }
+
+  bool estaDescansando() {
+    return tipoIntervalo == TipoIntervalo.DESCANSO;
+  }
+
+  @action
+  void trocarIntervalo() {
+    parar();
+    if (estaTrabalhando()) {
+      tipoIntervalo = TipoIntervalo.DESCANSO;
+      iniMin = iniMinDescanso;
+    } else {
+      tipoIntervalo = TipoIntervalo.TRABALHO;
+      iniMin = iniMinTrabalho;
     }
+    iniSec = 0;
+    iniciado = false;
+    iniciar();
   }
 }

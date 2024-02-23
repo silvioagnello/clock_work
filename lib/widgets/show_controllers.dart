@@ -10,10 +10,7 @@ class ShowControllers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final panel = Provider.of<PanelStore>(context);
-    // final iniMinTrabalho = panel.iniMinTrabalho.toString();
-    // final iniMinDescanso = panel.iniMinDescanso.toString();
-    //var iniMinTrabalho = panel.iniMinTrabalho.toString();
-    var iniMinDescanso = '0';
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -24,28 +21,6 @@ class ShowControllers extends StatelessWidget {
             children: [
               controlColumn(panel.iniMinTrabalho.toString(), 'Trabalho',
                   panel.incTrabalho, panel.decTrabalho),
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.start,
-              //   children: [
-              //     Text('Trabalho'),
-              //     Row(
-              //       children: [
-              //         IconButton(
-              //             icon: const Icon(FontAwesomeIcons.solidCircleUp),
-              //             color: Colors.red,
-              //             onPressed: panel.incTrabalho),
-              //         Padding(
-              //             padding: const EdgeInsets.all(8.0),
-              //             child:
-              //                 Text('${panel.iniMinTrabalho.toString()} min')),
-              //         IconButton(
-              //             icon: const Icon(FontAwesomeIcons.solidCircleDown),
-              //             color: Colors.red,
-              //             onPressed: panel.decTrabalho)
-              //       ],
-              //     )
-              //   ],
-              // ),
               controlColumn(panel.iniMinDescanso.toString(), 'Descanso',
                   panel.incDescanso, panel.decDescanso)
             ],
